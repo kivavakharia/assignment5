@@ -20,7 +20,7 @@ def message_format(entry: str, recipient: str, timestamp: str, token: str = '') 
 
 # {"token":"user_token", "directmessage": "new"}
 
-def requent_unread(token: str = ''):
+def request_unread(token: str = ''):
     """Request unread messages from the DS server."""
     return json.dumps({"token": token, "directmessage": "new"})
 

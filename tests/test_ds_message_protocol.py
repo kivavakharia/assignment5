@@ -8,18 +8,34 @@ test_ds_message_protocol.py
 # kvakhari@uci.edu
 
 import unittest
+import sys
+sys.path.insert(1, r'C:\Assignment5')
+
+import ds_protocol
 
 
 class TestDSMessageProtocol(unittest.TestCase):
 
     def test_message_format(self):
-        pass
+        token = "user_token"
+        entry = "Hello World!"
+        recipient = "ohhimark"
+        timestamp = "1603167689.3928561"
+        resp = ds_protocol.message_format(entry, recipient, timestamp, token)
+        exp = '{"token": "user_token", "directmessage": {"entry": "Hello World!", "recipient": "ohhimark", "timestamp": "1603167689.3928561"}}'
+        assert resp == exp
 
     def test_request_unread(self):
-        pass
+        token = "user_token"
+        resp = ds_protocol.request_unread(token)
+        exp = '{"token": "user_token", "directmessage": "new"}'
+        assert resp == exp
 
     def test_request_all(self):
-        pass
+        token = "user_token"
+        resp = ds_protocol.request_all(token)
+        exp = '{"token": "user_token", "directmessage": "all"}'
+        assert resp == exp
 
     def test_process_response(self):
         pass
