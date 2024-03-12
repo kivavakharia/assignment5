@@ -8,9 +8,6 @@ test_ds_message_protocol.py
 # kvakhari@uci.edu
 
 import unittest
-import sys
-sys.path.insert(1, r'C:\Assignment5')
-
 import ds_protocol
 
 
@@ -21,7 +18,7 @@ class TestDSMessageProtocol(unittest.TestCase):
         entry = "Hello World!"
         recipient = "ohhimark"
         timestamp = "1603167689.3928561"
-        resp = ds_protocol.message_format(entry, recipient, timestamp, token)
+        resp = ds_protocol.send_message(entry, recipient, timestamp, token)
         exp = '{"token": "user_token", "directmessage": {"entry": "Hello World!", "recipient": "ohhimark", "timestamp": "1603167689.3928561"}}'
         assert resp == exp
 

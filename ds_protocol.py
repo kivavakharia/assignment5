@@ -12,19 +12,16 @@ from collections import namedtuple
 
 ResponseTuple = namedtuple('DataTuple', ['type', 'message', 'token'])
 
-# {"token":"user_token", "directmessage": {"entry": "Hello World!","recipient":"ohhimark", "timestamp": "1603167689.3928561"}}
 
-def message_format(entry: str, recipient: str, timestamp: str, token: str = '') -> str:
+def send_message(entry: str, recipient: str, timestamp: str, token: str = '') -> str:
     """Send a directmessage to another DS user (in the example bellow, ohhimark)"""
     return json.dumps({"token": token, "directmessage": {"entry": entry, "recipient": recipient, "timestamp": timestamp}})
 
-# {"token":"user_token", "directmessage": "new"}
 
 def request_unread(token: str = ''):
     """Request unread messages from the DS server."""
     return json.dumps({"token": token, "directmessage": "new"})
 
-# {"token":"user_token", "directmessage": "all"}
 
 def request_all(token: str = ''):
     """Request all messages from the DS server."""
