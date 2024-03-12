@@ -9,5 +9,17 @@ test_ds_message_protocol.py
 
 import unittest
 
+
 class TestDSMessageProtocol(unittest.TestCase):
-    pass
+
+    def test_message_format(self):
+        pass
+
+    def test_request_unread(self):
+        pass
+
+    def test_request_all(self):
+        pass
+
+    def test_process_response(self):
+        pass
