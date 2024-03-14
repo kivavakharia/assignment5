@@ -13,22 +13,40 @@ from collections import namedtuple
 ResponseTuple = namedtuple('DataTuple', ['type', 'message', 'token'])
 
 
-def send_message(entry: str, recipient: str, timestamp: str, token: str = '') -> str:
-    """Send a directmessage to another DS user (in the example bellow, ohhimark)"""
+def format_join(username: str, password: str, token: str = "") -> str:
+    """Format the join command to comply with the server."""
+    return json.dumps({"join": {"username": username, "password": password,
+                                "token": token}})
+
+
+# def post_format(token: str, entry: str, timestamp: str) -> str:
+#     """Format the post command to comply with the server."""
+#     return json.dumps({"token": token,
+#                        "post": {"entry": entry, "timestamp": timestamp}})
+
+
+# def bio_format(token: str, entry: str, timestamp: str) -> str:
+#     """Format the bio command to comply with the server."""
+#     return json.dumps({"token": token,
+#                        "bio": {"entry": entry, "timestamp": timestamp}})
+
+
+def format_send_message(entry: str, recipient: str, timestamp: str, token: str = '') -> str:
+    """Send a directmessage to another DS user"""
     return json.dumps({"token": token, "directmessage": {"entry": entry, "recipient": recipient, "timestamp": timestamp}})
 
 
-def request_unread(token: str = ''):
+def format_request_unread(token: str = ''):
     """Request unread messages from the DS server."""
     return json.dumps({"token": token, "directmessage": "new"})
 
 
-def request_all(token: str = ''):
+def format_request_all(token: str = ''):
     """Request all messages from the DS server."""
     return json.dumps({"token": token, "directmessage": "all"})
 
 
-def process_response(json_msg: str):
+def extract_json(json_msg: str):
     """
     Parse a JSON response from the DSP server and convert it to a DataTuple.
 

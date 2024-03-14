@@ -18,19 +18,19 @@ class TestDSMessageProtocol(unittest.TestCase):
         entry = "Hello World!"
         recipient = "ohhimark"
         timestamp = "1603167689.3928561"
-        resp = ds_protocol.send_message(entry, recipient, timestamp, token)
+        resp = ds_protocol.format_send_message(entry, recipient, timestamp, token)
         exp = '{"token": "user_token", "directmessage": {"entry": "Hello World!", "recipient": "ohhimark", "timestamp": "1603167689.3928561"}}'
         assert resp == exp
 
     def test_request_unread(self):
         token = "user_token"
-        resp = ds_protocol.request_unread(token)
+        resp = ds_protocol.format_request_unread(token)
         exp = '{"token": "user_token", "directmessage": "new"}'
         assert resp == exp
 
     def test_request_all(self):
         token = "user_token"
-        resp = ds_protocol.request_all(token)
+        resp = ds_protocol.format_request_all(token)
         exp = '{"token": "user_token", "directmessage": "all"}'
         assert resp == exp
 
