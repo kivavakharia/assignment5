@@ -27,4 +27,5 @@ class TestDSMessenger(unittest.TestCase):
         assert new_messages_B[0].message == msg
 
     def test_retrieve_all(self):
+
         pass
