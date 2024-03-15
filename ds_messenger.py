@@ -9,7 +9,8 @@ ds_messenger.py
 
 import socket
 import time
-from ds_protocol import *
+import json
+from ds_protocol import format_join, format_send, format_unread, format_all
 
 
 class FailedInteraction(Exception):
@@ -42,7 +43,7 @@ class DirectMessenger:
         if not self.token:
             return False
 
-        send_msg = format_send_message(message, recipient, str(time.time()), self.token)
+        send_msg = format_send(message, recipient, str(time.time()), self.token)
         resp = self._command_to_server(send_msg)
         print(resp)
         return resp and resp.get('response', {}).get('type') == 'ok'
@@ -54,7 +55,7 @@ class DirectMessenger:
         if not self.token:
             return []
 
-        see_unread = format_request_unread(self.token)
+        see_unread = format_unread(self.token)
         resp = self._command_to_server(see_unread)
         if resp and resp.get('response', {}).get('type') == 'ok':
             unread_messages = resp['response'].get('messages', [])
@@ -70,7 +71,7 @@ class DirectMessenger:
         if not self.token:
             return []
 
-        see_all = format_request_all(self.token)
+        see_all = format_all(self.token)
         resp = self._command_to_server(see_all)
         if resp and resp.get('response', {}).get('type') == 'ok':
             all_messages = resp['response'].get('messages', [])

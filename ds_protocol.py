@@ -19,29 +19,29 @@ def format_join(username: str, password: str, token: str = "") -> str:
                                 "token": token}})
 
 
-# def post_format(token: str, entry: str, timestamp: str) -> str:
-#     """Format the post command to comply with the server."""
-#     return json.dumps({"token": token,
-#                        "post": {"entry": entry, "timestamp": timestamp}})
+def post_format(token: str, entry: str, timestamp: str) -> str:
+    """Format the post command to comply with the server."""
+    return json.dumps({"token": token,
+                       "post": {"entry": entry, "timestamp": timestamp}})
 
 
-# def bio_format(token: str, entry: str, timestamp: str) -> str:
-#     """Format the bio command to comply with the server."""
-#     return json.dumps({"token": token,
-#                        "bio": {"entry": entry, "timestamp": timestamp}})
+def bio_format(token: str, entry: str, timestamp: str) -> str:
+    """Format the bio command to comply with the server."""
+    return json.dumps({"token": token,
+                       "bio": {"entry": entry, "timestamp": timestamp}})
 
 
-def format_send_message(entry: str, recipient: str, timestamp: str, token: str = '') -> str:
+def format_send(entry: str, recipient: str, timestamp: str, token: str = '') -> str:
     """Send a directmessage to another DS user"""
     return json.dumps({"token": token, "directmessage": {"entry": entry, "recipient": recipient, "timestamp": timestamp}})
 
 
-def format_request_unread(token: str = ''):
+def format_unread(token: str = ''):
     """Request unread messages from the DS server."""
     return json.dumps({"token": token, "directmessage": "new"})
 
 
-def format_request_all(token: str = ''):
+def format_all(token: str = ''):
     """Request all messages from the DS server."""
     return json.dumps({"token": token, "directmessage": "all"})
 
