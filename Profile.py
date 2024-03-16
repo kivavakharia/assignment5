@@ -19,6 +19,8 @@ Classes:
 import json
 import time
 from pathlib import Path
+from collections import namedtuple
+
 
 
 class DsuFileError(Exception):
@@ -105,7 +107,7 @@ class Profile:
         self.bio = ''
         self._posts = []
         self.friends = []
-        self.all_messages = {}
+        self.all_messages = []
 
     def add_post(self, post: Post) -> None:
         """
@@ -205,7 +207,7 @@ class Profile:
         else:
             raise DsuFileError()
 
-    def add_friend(self, friend_user: str):
+    def add_friend(self, friend_user: str) -> None:
         """Add a username to the user's list of friends."""
         if not friend_user in self.friends:
             self.friends.append(friend_user)
@@ -214,24 +216,27 @@ class Profile:
         """Get the user's list of friends."""
         return self.friends
 
-    def add_message(self, messages: list):
+    def add_message(self, messages: list) -> None:
         """Add a message to the DSU profile."""
         for dm in messages:
-            self.all_messages[dm.sender] = dm.message
+            format = {'sender': dm.sender, 'message': dm.message, 
+                      'timestamp': dm.timestamp, 'if_read': False}
+            self.all_messages.append(format)
+            
 
     def get_messages(self) -> dict:
         """Get all the messages sent to the user."""
         return self.all_messages
-
+    
+    def mark_read(self, message):
+        pass
 
 from ds_messenger import DirectMessage
-import time
 
 test_profile = Profile(username="tester_name", password="lmfao")
 filepath = r'C:\Assignment5\tester.dsu'
 test_profile.add_friend("prabhtaj")
 test_profile.add_friend("armanbains")
-print(test_profile.get_friends())
 message = [DirectMessage(sender='aryan_manglm', message='a tester message', timestamp=time.time())]
 test_profile.add_message(message)
 test_profile.save_profile(filepath)

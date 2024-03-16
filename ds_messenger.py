@@ -144,6 +144,8 @@ if __name__ == "__main__":
    new_messages_A = messengerA.retrieve_new()
    print("New", new_messages_A)
    all_messages_A = messengerA.retrieve_all()
+   for m in all_messages_A:
+       print(m)
    print("All messages for A:", all_messages_A)
    messengerA.close_sock()
    messengerB.close_sock()
