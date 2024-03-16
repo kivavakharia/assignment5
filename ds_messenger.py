@@ -19,8 +19,8 @@ class FailedInteraction(Exception):
 
 
 class DirectMessage:
-    def __init__(self, recipient=None, message=None, timestamp=None):
-        self.recipient = recipient
+    def __init__(self, sender=None, message=None, timestamp=None):
+        self.sender = sender
         self.message = message
         self.timestamp = timestamp
 
@@ -75,6 +75,7 @@ class DirectMessenger:
         resp = self._command_to_server(see_all)
         if resp and resp.get('response', {}).get('type') == 'ok':
             all_messages = resp['response'].get('messages', [])
+            print("all messages: ", all_messages)
             return [DirectMessage(m['from'], m['message'], m['timestamp']) for m in all_messages]
         return []
 
@@ -130,19 +131,21 @@ class DirectMessenger:
             self.sock = None
 
 
-# if __name__ == "__main__":
-#    messengerA = DirectMessenger(dsuserver="168.235.86.101", username="usernameA", password="passwordA")
-#    messengerB = DirectMessenger(dsuserver="168.235.86.101", username="usernameB", password="passwordB")
-#    successAtoB = messengerA.send("Hello B!", recipient="usernameB")
-#    print("Message sent from A to B:", successAtoB)
-#    new_messages_B = messengerB.retrieve_new()
-#    print("New messages for B:", new_messages_B)
-#    successBtoA = messengerB.send("Hi A", recipient="usernameA")
-#    print("Message sent from B to A:", successBtoA)
-#    time.sleep(1)  # Wait a bit for the server to process the message
-#    new_messages_A = messengerA.retrieve_new()
-#    print("New", new_messages_A)
-#    all_messages_A = messengerA.retrieve_all()
-#    print("All messages for A:", all_messages_A)
-#    messengerA.close()
-#    messengerB.close()
+if __name__ == "__main__":
+   messengerA = DirectMessenger(dsuserver="168.235.86.101", username="usernameA", password="passwordA")
+   messengerB = DirectMessenger(dsuserver="168.235.86.101", username="usernameB", password="passwordB")
+   successAtoB = messengerA.send("Hello B!", recipient="usernameB")
+   print("Message sent from A to B:", successAtoB)
+   new_messages_B = messengerB.retrieve_new()
+   print("New messages for B:", new_messages_B)
+   successBtoA = messengerB.send("Hi A", recipient="usernameA")
+   print("Message sent from B to A:", successBtoA)
+   time.sleep(1)  # Wait a bit for the server to process the message
+   new_messages_A = messengerA.retrieve_new()
+   print("New", new_messages_A)
+   all_messages_A = messengerA.retrieve_all()
+   print("All messages for A:", all_messages_A)
+   messengerA.close_sock()
+   messengerB.close_sock()
+
+# message format: {'message': 'Hi A, this is B!', 'from': 'usernameB', 'timestamp': '1710359081.003671'}
