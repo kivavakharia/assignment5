@@ -231,12 +231,12 @@ class Profile:
     def mark_read(self, message):
         pass
 
-from ds_messenger import DirectMessage
+# from ds_messenger import DirectMessage
 
-test_profile = Profile(username="tester_name", password="lmfao")
-filepath = r'C:\Assignment5\tester.dsu'
-test_profile.add_friend("prabhtaj")
-test_profile.add_friend("armanbains")
-message = [DirectMessage(sender='aryan_manglm', message='a tester message', timestamp=time.time())]
-test_profile.add_message(message)
-test_profile.save_profile(filepath)
+# test_profile = Profile(username="tester_name", password="lmfao")
+# filepath = r'C:\Assignment5\tester.dsu'
+# test_profile.add_friend("prabhtaj")
+# test_profile.add_friend("armanbains")
+# message = [DirectMessage(sender='aryan_manglm', message='a tester message', timestamp=time.time())]
+# test_profile.add_message(message)
+# test_profile.save_profile(filepath)
