@@ -9,6 +9,7 @@ Starting point of the Assignment 5 module.
 # kvakhari@uci.edu
 
 import tkinter as tk
+import tkinter.font as tkFont
 
 
 def left_side(root):
@@ -19,9 +20,15 @@ def left_side(root):
     left_title.pack(fill='x', padx=10, pady=5)
     left_title.pack_propagate(False)  # Prevent resizing to fit the label
 
-    label = tk.Label(left_title, text="CONTACTS", bg="white")
+    label_font = tkFont.Font(family="Georgia", size=12)
+    label = tk.Label(left_title, text="CONTACTS", bg="white", font=label_font)
     label.pack()
     left_frame.pack_propagate(False)
+
+    button_font = tkFont.Font(family="Georgia", size=10)
+    button = tk.Button(root, text="Add Contact", width=25, font=button_font)
+    # TODO: add a command to the button
+    button.grid(row=1, column=0, sticky='sw', padx=10, pady=10)
 
 
 def right_side(root):
@@ -32,13 +39,16 @@ def right_side(root):
     upper_section = tk.Frame(right_frame, bg='#F6F4E8', width=650, height=350, bd=1, relief="solid")  # Adjust height as needed
     upper_section.pack(fill='both', expand=True, side='top')
 
-    lower_section = tk.Frame(right_frame, bg='#F6F4E8', width=650, height=100, bd=1, relief="solid")  # Adjust height as needed
+    lower_section = tk.Frame(right_frame, bg='#F6F4E8', width=650, height=50, bd=1, relief="solid")  # Adjust height as needed
     lower_section.pack(fill='both', side='bottom')
 
+    button_font = tkFont.Font(family="Georgia", size=9)
+    button = tk.Button(lower_section, text="SEND", font=button_font)
+    button.grid(row=0, column=1, sticky='e', padx=10, pady=10)
 
-def bottom(root):
-    button = tk.Button(root, text="Click Me", width=30)
-    button.grid(row=1, column=0, sticky='sw', padx=10, pady=10)
+    entry_font = tkFont.Font(family='Georgia', size=12)
+    entry = tk.Entry(lower_section, width=60, font=entry_font)
+    entry.grid(row=0, column=0, sticky='ew', padx=20) 
 
 
 def main():
@@ -48,7 +58,6 @@ def main():
 
     right_side(root)
     left_side(root)
-    bottom(root)
 
     root.geometry("950x500")
     root.mainloop()
