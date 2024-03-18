@@ -9,7 +9,34 @@ Starting point of the Assignment 5 module.
 # kvakhari@uci.edu
 
 import tkinter as tk
+from tkinter import simpledialog
 import tkinter.font as tkFont
+import ds_messenger
+from Profile import Profile
+
+
+def quit_app(root):
+    root.destroy()
+
+def authenticate():
+    entered_user = simpledialog.askstring("Input", "Enter your username:")
+    entered_pass = simpledialog.askstring("Input", "Enter your password")
+    server = simpledialog.askstring("Input", "Server Address:")
+    print(entered_user, entered_pass)
+
+    if True:
+        #TODO: if user is valid and matches the password, continue. Else: quit the program.
+        pass
+
+
+def add_contact():
+    # TODO: bind this to adding a contact
+    pass
+
+
+def get_input(entry):
+    user_input = entry.get()  # Get the text from the Entry widget
+    print(user_input)
 
 
 def left_side(root):
@@ -26,8 +53,7 @@ def left_side(root):
     left_frame.pack_propagate(False)
 
     button_font = tkFont.Font(family="Georgia", size=10)
-    button = tk.Button(root, text="Add Contact", width=25, font=button_font)
-    # TODO: add a command to the button
+    button = tk.Button(root, text="Add Contact", width=25, font=button_font, command=add_contact)
     button.grid(row=1, column=0, sticky='sw', padx=10, pady=10)
 
 
@@ -36,19 +62,24 @@ def right_side(root):
     right_frame.grid(row=0, column=1, pady=5, sticky='nsew')
     right_frame.grid_propagate(False)
 
-    upper_section = tk.Frame(right_frame, bg='#F6F4E8', width=650, height=350, bd=1, relief="solid")  # Adjust height as needed
+    upper_section = tk.Frame(right_frame, bg='#F6F4E8', width=650, height=350, bd=1, relief="solid")
     upper_section.pack(fill='both', expand=True, side='top')
 
-    lower_section = tk.Frame(right_frame, bg='#F6F4E8', width=650, height=50, bd=1, relief="solid")  # Adjust height as needed
+    lower_section = tk.Frame(right_frame, bg='#F6F4E8', width=650, height=50, bd=1, relief="solid")
     lower_section.pack(fill='both', side='bottom')
-
-    button_font = tkFont.Font(family="Georgia", size=9)
-    button = tk.Button(lower_section, text="SEND", font=button_font)
-    button.grid(row=0, column=1, sticky='e', padx=10, pady=10)
 
     entry_font = tkFont.Font(family='Georgia', size=12)
     entry = tk.Entry(lower_section, width=60, font=entry_font)
     entry.grid(row=0, column=0, sticky='ew', padx=20) 
+
+    def get_input():
+        message = entry.get()
+        # TODO: send that message to the specified recipient
+        print(message)
+
+    button_font = tkFont.Font(family="Georgia", size=9)
+    button = tk.Button(lower_section, text="SEND", font=button_font, command=get_input)
+    button.grid(row=0, column=1, sticky='e', padx=10, pady=10)
 
 
 def main():
@@ -56,6 +87,7 @@ def main():
     root.title("ICS 32 Distributed Social Messenger")
     root.config(bg="#BACEC1")
 
+    authenticate()
     right_side(root)
     left_side(root)
 
