@@ -132,7 +132,7 @@ class DirectMessenger:
 
 
 # if __name__ == "__main__":
-#    messengerA = DirectMessenger(dsuserver="168.235.86.101", username="usernameA", password="passwordA")
+#    messengerA = DirectMessenger(dsuserver="168.235.86.101", username="ishantrivedi", password="ilovemia")
 #    messengerB = DirectMessenger(dsuserver="168.235.86.101", username="usernameB", password="passwordB")
 #    successAtoB = messengerA.send("Hello B!", recipient="usernameB")
 #    print("Message sent from A to B:", successAtoB)
@@ -144,8 +144,6 @@ class DirectMessenger:
 #    new_messages_A = messengerA.retrieve_new()
 #    print("New", new_messages_A)
 #    all_messages_A = messengerA.retrieve_all()
-#    for m in all_messages_A:
-#        print(m)
 #    print("All messages for A:", all_messages_A)
 #    messengerA.close_sock()
 #    messengerB.close_sock()

@@ -1,7 +1,13 @@
+# Kiva Vakharia
+# 23234227
+# kvakhari@uci.edu
+
 import tkinter as tk
-from tkinter import ttk, filedialog
+import tkinter.font as tkFont
+from tkinter import ttk, simpledialog
 from typing import Text
 from ds_messenger import DirectMessenger
+from Profile import Profile
 
 
 class Body(tk.Frame):
@@ -42,7 +48,7 @@ class Body(tk.Frame):
         self.message_editor.insert(1.0, text)
 
     def _draw(self):
-        posts_frame = tk.Frame(master=self, width=250)
+        posts_frame = tk.Frame(master=self, width=250, bg='#FFF1F5')
         posts_frame.pack(fill=tk.BOTH, side=tk.LEFT)
 
         self.posts_tree = ttk.Treeview(posts_frame)
@@ -91,12 +97,12 @@ class Footer(tk.Frame):
             self._send_callback()
 
     def _draw(self):
-        save_button = tk.Button(master=self, text="Send", width=20)
+        font = tkFont.Font(family="Georgia")
+        save_button = tk.Button(master=self, text="Send", width=20, font=font)
         # You must implement this.
         # Here you must configure the button to bind its click to
         # the send_click() function.
         save_button.pack(fill=tk.BOTH, side=tk.RIGHT, padx=5, pady=5)
-
         self.footer_label = tk.Label(master=self, text="Ready.")
         self.footer_label.pack(fill=tk.BOTH, side=tk.LEFT, padx=5)
 
@@ -145,6 +151,7 @@ class MainApp(tk.Frame):
         self.server = None
         self.recipient = None
         self.direct_messenger = None
+        self.profile = None
         # After all initialization is complete,
         # call the _draw method to pack the widgets
         # into the root frame
@@ -152,14 +159,11 @@ class MainApp(tk.Frame):
         self.body.insert_contact("kivavakharia") # adding one example student.
 
     def send_message(self, message):
-        self.direct_messenger.send(message, self.recipient)
+        pass
 
     def add_contact(self):
-        # You must implement this!
-        # Hint: check how to use tk.simpledialog.askstring to retrieve
-        # the name of the new contact, and then use one of the body
-        # methods to add the contact to your contact list
-        pass
+        contact_name = simpledialog.askstring("Input", "Enter Contact Name:")
+        self.body.insert_contact(contact_name)
 
     def recipient_selected(self, recipient):
         self.recipient = recipient
@@ -180,8 +184,17 @@ class MainApp(tk.Frame):
         # You must implement this!
         pass
 
+    def authenticate_user(self):
+        user = simpledialog.askstring("Input", "Enter your username:")
+        password = simpledialog.askstring("Input", "Enter your password")
+        self.username = user
+        self.password = password
+        self.profile = Profile(username=user, password=password)
+        Body._contacts = self.profile.get_friends()
+
     def _draw(self):
         # Build a menu and add it to the root frame.
+        self.authenticate_user()
         menu_bar = tk.Menu(self.root)
         self.root['menu'] = menu_bar
         menu_file = tk.Menu(menu_bar)
@@ -198,17 +211,20 @@ class MainApp(tk.Frame):
         settings_file.add_command(label='Configure DS Server',
                                   command=self.configure_server)
 
+
         # The Body and Footer classes must be initialized and
         # packed into the root window.
         self.body = Body(self.root,
                          recipient_selected_callback=self.recipient_selected)
         self.body.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
+        self.body._contacts = self.profile.get_friends()
         self.footer = Footer(self.root, send_callback=self.send_message)
         self.footer.pack(fill=tk.BOTH, side=tk.BOTTOM)
 
 
 if __name__ == "__main__":
     main = tk.Tk()
+    main.config(bg="#BACEC1")
     main.title("ICS 32 Distributed Social Messenger")
     main.geometry("1000x480")
     main.option_add('*tearOff', False)
