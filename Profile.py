@@ -107,7 +107,8 @@ class Profile:
         self.bio = ''
         self._posts = []
         self.friends = []
-        self.all_messages = []
+        self.recieved = []
+        self.sent = []
 
     def add_post(self, post: Post) -> None:
         """
@@ -201,7 +202,8 @@ class Profile:
                         post = Post(post_obj['entry'], post_obj['timestamp'])
                         self._posts.append(post)
                     self.friends = obj['friends']
-                    self.messages = obj['messages']
+                    self.recieved = obj['recieved']
+                    self.sent = obj['sent']
             except Exception as ex:
                 raise DsuProfileError(ex) from ex
         else:
@@ -221,12 +223,12 @@ class Profile:
         for dm in messages:
             format = {'sender': dm.sender, 'message': dm.message, 
                       'timestamp': dm.timestamp, 'if_read': False}
-            self.all_messages.append(format)
+            self.recieved.append(format)
             
 
     def get_messages(self) -> dict:
         """Get all the messages sent to the user."""
-        return self.all_messages
+        return self.recieved
     
     def mark_read(self, message):
         pass
