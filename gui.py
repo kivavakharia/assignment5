@@ -4,6 +4,7 @@
 
 
 import tkinter as tk
+import tkinter.scrolledtext as st
 import tkinter.font as tkFont
 import os
 from ds_messenger import DirectMessenger
@@ -59,15 +60,28 @@ class MainApp(tk.Tk):
 
     def configure_server(self):
         self.dsuserver = simpledialog.askstring("Input", "Enter Server Address:")
+        self.user_profile.dsuserver = self.dsuserver
         self.messenger = DirectMessenger(self.dsuserver, self.username, self.password)
         print(f"Configured Server at {self.dsuserver}.")
 
     def node_select(self, event):
-        index = int(self.posts_tree.selection()[0][-1])
-        print(index)
-        self.selected = self.contacts[index-1]
-        print(self.selected)
-    
+        selected_id = self.posts_tree.selection()[0]  # This is the item ID, not an index
+        self.selected_contact = self.posts_tree.item(selected_id, 'text')
+        print(self.selected_contact)
+        self.get_message_history()
+
+    def get_message_history(self):
+        self.message_display.config(state='normal')  # Enable editing of the widget
+        self.message_display.delete('1.0', tk.END)  # Clear existing text
+
+        messages = self.messenger.retrieve_all()
+        for m in messages:
+            if m.sender == self.selected_contact:
+                display_text = f"From {m.sender}: {m.message}\n"
+                self.message_display.insert(tk.END, display_text)
+
+        self.message_display.config(state='disabled')
+        
     def insert_contact(self, contact: str):
         self.contacts.append(contact)
         id = len(self.contacts) - 1
@@ -126,6 +140,10 @@ class MainApp(tk.Tk):
         self.upper_section = tk.Frame(right_frame, bg='#FFF1F5', width=650, height=350, bd=1, relief="solid")
         self.upper_section.pack(fill='both', expand=True, side='top')
 
+        self.message_display = st.ScrolledText(self.upper_section, wrap=tk.WORD, width=80, height=20)
+        self.message_display.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        self.message_display.config(state='disabled')
+
         lower_section = tk.Frame(right_frame, bg='#FFF1F5', width=650, height=50, bd=1, relief="solid")
         lower_section.pack(fill='both', side='bottom')
 
@@ -135,7 +153,7 @@ class MainApp(tk.Tk):
 
         def send_message():
             message = entry.get()
-            self.messenger.send(message, self.selected)
+            self.messenger.send(message, self.selected_contact)
             print(message)
 
         button_font = tkFont.Font(family="Georgia", size=9)
@@ -151,15 +169,3 @@ class MainApp(tk.Tk):
     def _draw(self, root):
         self.right_side(root)
         self.left_side(root)
-
-
-def main():
-    root = tk.Tk()
-    root.title("ICS 32 Distributed Social Messenger")
-    root.config(bg="#FFCAD4")
-    root.geometry("950x500")
-    MainApp(root)
-    root.mainloop()
-
-if __name__ == "__main__":
-    main()

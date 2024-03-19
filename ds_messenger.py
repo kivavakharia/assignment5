@@ -132,20 +132,22 @@ class DirectMessenger:
 
 
 if __name__ == "__main__":
-   messengerA = DirectMessenger(dsuserver="168.235.86.101", username="tanushmaheshwari", password="fuckingdogs")
-   messengerB = DirectMessenger(dsuserver="168.235.86.101", username="namrathabhat", password="ilovedarius")
-   successAtoB = messengerA.send("Hello B!", recipient="usernameB")
-   print("Message sent from A to B:", successAtoB)
-   new_messages_B = messengerB.retrieve_new()
-   print("New messages for B:", new_messages_B)
-   successBtoA = messengerB.send("Hi A", recipient="usernameA")
-   print("Message sent from B to A:", successBtoA)
-   time.sleep(1)  # Wait a bit for the server to process the message
-   new_messages_A = messengerA.retrieve_new()
-   print("New", new_messages_A)
-   all_messages_A = messengerA.retrieve_all()
-   print("All messages for A:", all_messages_A)
-   messengerA.close_sock()
-   messengerB.close_sock()
+   swetha = DirectMessenger(dsuserver="168.235.86.101", username="sweat", password="sweaty")
+   kiva = DirectMessenger(dsuserver="168.235.86.101", username="kia", password="poa")
+#    successAtoB = kiva.send("can u get w him already", recipient="sweat")
+#    print("Message sent from A to B: ", successAtoB)
+#    new_messages_B = swetha.retrieve_new()
+#    print("New messages for B:", new_messages_B)
+   successBtoA = swetha.send("twhat about now", recipient="kia")
+#    print("Message sent from B to A:", successBtoA)
+#    time.sleep(1)  # Wait a bit for the server to process the message
+#    new_messages_A = kiva.retrieve_new()
+#    print("New", new_messages_A)
+#    all_messages_A = kiva.retrieve_all()
+#    for m in all_messages_A:
+#        print(m.message)
+#    print("All messages for A:", all_messages_A)
+   swetha.close_sock()
+   kiva.close_sock()
 
 # message format: {'message': 'Hi A, this is B!', 'from': 'usernameB', 'timestamp': '1710359081.003671'}
