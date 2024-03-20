@@ -107,7 +107,7 @@ class Profile:
         self.bio = ''
         self._posts = []
         self.friends = []
-        self.recieved = []
+        self.received = []
         self.sent = []
 
     def add_post(self, post: Post) -> None:
@@ -202,7 +202,7 @@ class Profile:
                         post = Post(post_obj['entry'], post_obj['timestamp'])
                         self._posts.append(post)
                     self.friends = obj['friends']
-                    self.recieved = obj['recieved']
+                    self.received = obj['received']
                     self.sent = obj['sent']
             except Exception as ex:
                 raise DsuProfileError(ex) from ex
@@ -218,27 +218,18 @@ class Profile:
         """Get the user's list of friends."""
         return self.friends
 
-    def add_message(self, messages: list) -> None:
+    def add_received_message(self, messages: list) -> None:
         """Add a message to the DSU profile."""
         for dm in messages:
-            format = {'sender': dm.sender, 'message': dm.message, 
-                      'timestamp': dm.timestamp, 'if_read': False}
-            self.recieved.append(format)
-            
+            format = {'sender': dm.sender, 'message': dm.message}
+            if format not in self.received:
+                self.received.append(format)
+
+    def add_sent_message(self, message: str, recipient: str) -> None:
+        """Record a message that you have sent."""
+        format = {'recipient': recipient, 'message': message}
+        self.sent.append(format)
 
     def get_messages(self) -> dict:
         """Get all the messages sent to the user."""
         return self.recieved
-    
-    def mark_read(self, message):
-        pass
-
-# from ds_messenger import DirectMessage
-
-# test_profile = Profile(username="tester_name", password="lmfao")
-# filepath = r'C:\Assignment5\tester.dsu'
-# test_profile.add_friend("prabhtaj")
-# test_profile.add_friend("armanbains")
-# message = [DirectMessage(sender='aryan_manglm', message='a tester message', timestamp=time.time())]
-# test_profile.add_message(message)
-# test_profile.save_profile(filepath)

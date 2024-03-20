@@ -59,29 +59,46 @@ class MainApp(tk.Tk):
         self.contacts = self.user_profile.get_friends()
 
     def configure_server(self):
+        """Connect to the DSU Server and instantiate DirectMessenger."""
         self.dsuserver = simpledialog.askstring("Input", "Enter Server Address:")
         self.user_profile.dsuserver = self.dsuserver
         self.messenger = DirectMessenger(self.dsuserver, self.username, self.password)
         print(f"Configured Server at {self.dsuserver}.")
 
     def node_select(self, event):
+        """Handles contact selection."""
         selected_id = self.posts_tree.selection()[0]  # This is the item ID, not an index
         self.selected_contact = self.posts_tree.item(selected_id, 'text')
-        print(self.selected_contact)
         self.get_message_history()
 
     def get_message_history(self):
-        self.message_display.config(state='normal')  # Enable editing of the widget
-        self.message_display.delete('1.0', tk.END)  # Clear existing text
+        """Displays old messages"""
+        self.message_display.config(state='normal')
+        self.message_display.delete('1.0', tk.END)
 
-        messages = self.messenger.retrieve_all()
-        for m in messages:
-            if m.sender == self.selected_contact:
-                display_text = f"From {m.sender}: {m.message}\n"
-                self.message_display.insert(tk.END, display_text)
+        if self.messenger:
+            print("messenger")
+            messages = self.messenger.retrieve_all()
+            for m in messages:
+                if m.sender == self.selected_contact and not any(d['message'] == m.message for d in self.user_profile.received):
+                    self.user_profile.add_received_message([m])
+            self.user_profile.save_profile(self.filepath)
+            for m in messages:
+                if m.sender == self.selected_contact:
+                    display_text = f"From {m.sender}: {m.message}\n"
+                    print(display_text)
+                    self.message_display.insert(tk.END, display_text)
+
+        else:
+            messages = self.user_profile.received
+            for m in messages:
+                if m['sender'] == self.selected_contact:
+                    print("sender is selected")
+                    display_text = f"From {m['sender']}: {m['message']}\n"
+                    self.message_display.insert(tk.END, display_text)
 
         self.message_display.config(state='disabled')
-        
+
     def insert_contact(self, contact: str):
         self.contacts.append(contact)
         id = len(self.contacts) - 1
@@ -154,6 +171,8 @@ class MainApp(tk.Tk):
         def send_message():
             message = entry.get()
             self.messenger.send(message, self.selected_contact)
+            self.user_profile.add_sent_message(message, self.selected_contact)
+            self.user_profile.save_profile(self.filepath)
             print(message)
 
         button_font = tkFont.Font(family="Georgia", size=9)
@@ -166,6 +185,9 @@ class MainApp(tk.Tk):
         user_button = tk.Button(root, text="Load User", font=button_font, command=self.load_user)
         user_button.grid(row=1, column=1, sticky='s', padx=10, pady=10)
 
+    def refresh(self):
+        pass
+    
     def _draw(self, root):
         self.right_side(root)
         self.left_side(root)
