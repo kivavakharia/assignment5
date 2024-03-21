@@ -9,7 +9,7 @@ import tkinter.font as tkFont
 import os
 from ds_messenger import DirectMessenger
 from Profile import Profile
-from tkinter import ttk, simpledialog, filedialog
+from tkinter import ttk, simpledialog, messagebox
 from pathlib import Path
 
 
@@ -41,7 +41,9 @@ class MainApp:
         self.auto_refresh()
 
     def auto_refresh(self):
+        """Refreshes the server, allowing automatic updates."""
         print("Refreshing...")  # Example action
+        self.single_msg_display()
         if self.selected_contact is not None:
             self.get_message_history()
         self.root.after(5000, self.auto_refresh)
@@ -65,12 +67,9 @@ class MainApp:
         self.password = login.password
         self.contacts = self.user_profile.get_friends()
 
-    def new_server(self):
-        self.dsuserver = simpledialog.askstring("Input", "Enter Server Address:")
-        self.configure_server()
-
     def configure_server(self):
         """Connect to the DSU Server and instantiate DirectMessenger."""
+        self.dsuserver = simpledialog.askstring("Input", "Enter Server Address:")
         self.user_profile.dsuserver = self.dsuserver
         self.messenger = DirectMessenger(self.dsuserver, self.username, self.password)
         print(f"Configured Server at {self.dsuserver}.")
@@ -86,7 +85,6 @@ class MainApp:
         self.message_display.config(state='normal')
         self.message_display.delete('1.0', tk.END)
 
-        # Check and display received messages
         if self.messenger:
             messages = self.messenger.retrieve_all()
             for m in messages:
@@ -98,7 +96,6 @@ class MainApp:
                     display_text = f"From {m.sender}: {m.message}\n"
                     self.message_display.insert(tk.END, display_text, 'received')
 
-        # Display messages from the profile (assuming no messenger or offline)
         else:
             received_messages = self.user_profile.received
             for m in received_messages:
@@ -106,7 +103,6 @@ class MainApp:
                     display_text = f"From {m['sender']}: {m['message']}\n"
                     self.message_display.insert(tk.END, display_text, 'received')
 
-        # Display sent messages
         sent_messages = self.user_profile.sent
         for m in sent_messages:
             if m['recipient'] == self.selected_contact:
@@ -115,17 +111,29 @@ class MainApp:
 
         self.message_display.config(state='disabled')
 
+    def single_msg_display(self):
+        """Displays singular new messages from new contacts."""
+        if self.messenger:
+            new_msgs = self.messenger.retrieve_new()
+            for msg in new_msgs:
+                if not msg.sender in self.user_profile.friends:
+                    info = f'From {msg.sender}:\n{msg.message}'
+                    messagebox.showinfo(f"Message from New Contact", info)
+
     def insert_contact(self, contact: str):
+        """Inserts a contact into the treeview."""
         self.contacts.append(contact)
         id = len(self.contacts) - 1
         self._insert_contact_tree(id, contact)
 
     def _insert_contact_tree(self, id, contact: str):
+        """Inserts a contact into the treeview."""
         if len(contact) > 25:
             entry = contact[:24] + "..."
         id = self.posts_tree.insert('', id, id, text=contact)
 
     def add_contact(self):
+        """Add a contact to the user profile."""
         contact_name = simpledialog.askstring("Input", "Enter Contact Name:")
         self.insert_contact(contact_name)
         self.user_profile.add_friend(contact_name)
@@ -188,18 +196,24 @@ class MainApp:
         entry.grid(row=0, column=0, sticky='ew', padx=20) 
 
         def send_message():
+            """Send a message to the selected recipient."""
             message = entry.get()
             recipient = self.selected_contact
-            self.messenger.send(message, recipient)
-            self.user_profile.add_sent_message(message, recipient)
-            self.user_profile.save_profile(self.filepath)
+            try:
+                self.messenger.send(message, recipient)
+                self.user_profile.add_sent_message(message, recipient)
+                self.user_profile.save_profile(self.filepath)
+            except AttributeError:
+                err_msg = "Enter a server address to send a message."
+                messagebox.showerror("Connect to Server Error", err_msg)
+                
             entry.delete(0, 'end')
 
         button_font = tkFont.Font(family="Georgia", size=9)
         send_button = tk.Button(lower_section, text="SEND", font=button_font, command=send_message)
         send_button.grid(row=0, column=1, sticky='e', padx=10, pady=10)
 
-        server_button = tk.Button(root, text="Connect to Server", font=button_font, command=self.new_server)
+        server_button = tk.Button(root, text="Connect to Server", font=button_font, command=self.configure_server)
         server_button.grid(row=1, column=1, sticky='se', padx=10, pady=10)
 
         quit_button = tk.Button(root, text="QUIT PROGRAM", font=button_font, command=self.quit_application)
@@ -209,6 +223,7 @@ class MainApp:
         user_button.grid(row=1, column=1, sticky='s', padx=10, pady=10)
     
     def _draw(self, root):
+        """Draw the GUI."""
         self.right_side(root)
         self.left_side(root)
 

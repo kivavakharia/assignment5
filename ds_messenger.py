@@ -36,7 +36,6 @@ class DirectMessenger:
 
     def send(self, message:str, recipient:str) -> bool:
         """Send a message to a user on the DSU server."""
-        # must return true if message successfully sent, false if send failed.
 
         if not self.token:
             self._login_user()
@@ -49,7 +48,7 @@ class DirectMessenger:
         return resp and resp.get('response', {}).get('type') == 'ok'
 
     def retrieve_new(self) -> list:
-        # must return a list of DirectMessage objects containing all new messages
+        """Retrieve unread messages under a profile."""
         if not self.token:
             self._login_user()
         if not self.token:
@@ -64,7 +63,7 @@ class DirectMessenger:
 
 
     def retrieve_all(self) -> list:
-        # must return a list of DirectMessage objects containing all messages
+        """Retrieve all messages under a profile."""
         self._socket_create()
         if not self.token:
             self._login_user()
@@ -92,20 +91,19 @@ class DirectMessenger:
             print(f"Could not connect to server: {e}")
 
 
-    def _login_user(self):
+    def _login_user(self) -> None:
         """Log the user into the DSU server."""
         self._socket_create()
         join_cmd = format_join(self.username, self.password)
         resp = self._command_to_server(join_cmd)
-        print(f"Login response: {resp}")
 
         if resp and resp.get('response', {}).get('type') == 'ok':
             self.token = resp['response']['token']
-
         else:
             raise FailedInteraction("Failed to log in.")
 
-    def _command_to_server(self, cmd):
+
+    def _command_to_server(self, cmd) -> str:
         """Send a command to the DSU server."""
         try:
             snd = self.sock.makefile('w')
@@ -122,7 +120,7 @@ class DirectMessenger:
             return None
 
 
-    def close_sock(self):
+    def close_sock(self) -> None:
         """Closes the current open socket."""
         if self.sock:
             self.sock.close()

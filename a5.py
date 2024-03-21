@@ -11,6 +11,7 @@ Starting point of the Assignment 5 module.
 import tkinter as tk
 from gui import MainApp
 
+
 def main():
     """Run the Graphical User Interface."""
     root = tk.Tk()
