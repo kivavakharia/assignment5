@@ -75,7 +75,6 @@ class DirectMessenger:
         resp = self._command_to_server(see_all)
         if resp and resp.get('response', {}).get('type') == 'ok':
             all_messages = resp['response'].get('messages', [])
-            print("all messages: ", all_messages)
             return [DirectMessage(m['from'], m['message'], m['timestamp']) for m in all_messages]
         return []
 
@@ -105,7 +104,6 @@ class DirectMessenger:
 
         else:
             raise FailedInteraction("Failed to log in.")
-
 
     def _command_to_server(self, cmd):
         """Send a command to the DSU server."""
@@ -138,7 +136,7 @@ if __name__ == "__main__":
 #    print("Message sent from A to B: ", successAtoB)
 #    new_messages_B = swetha.retrieve_new()
 #    print("New messages for B:", new_messages_B)
-   successBtoA = swetha.send("twhat about now", recipient="kia")
+   successBtoA = swetha.send("new message so sick", recipient="kia")
 #    print("Message sent from B to A:", successBtoA)
 #    time.sleep(1)  # Wait a bit for the server to process the message
 #    new_messages_A = kiva.retrieve_new()

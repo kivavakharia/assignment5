@@ -21,16 +21,16 @@ class LoginInfo():
         self.password = simpledialog.askstring("PASSWORD", "Enter Your Password:")
 
 
-class MainApp(tk.Tk):
+class MainApp:
 
     def __init__(self, root):
-        super().__init__()
         self.root = root
         self.username = None
         self.password = None
         self.contacts = []
         self.dsuserver = None
         self.messenger = None
+        self.selected_contact = None
         self.user_profile = None
         self.filepath = None
         self._draw(self.root)
@@ -38,6 +38,13 @@ class MainApp(tk.Tk):
         login = LoginInfo()
         if login.server and login.username and login.password:
             self.load_user(login)
+        self.auto_refresh()
+
+    def auto_refresh(self):
+        print("Refreshing...")  # Example action
+        if self.selected_contact is not None:
+            self.get_message_history()
+        self.root.after(5000, self.auto_refresh)
 
     def load_user(self, login):
         """Load a user profile onto the GUI."""
@@ -58,9 +65,12 @@ class MainApp(tk.Tk):
         self.password = login.password
         self.contacts = self.user_profile.get_friends()
 
+    def new_server(self):
+        self.dsuserver = simpledialog.askstring("Input", "Enter Server Address:")
+        self.configure_server()
+
     def configure_server(self):
         """Connect to the DSU Server and instantiate DirectMessenger."""
-        self.dsuserver = simpledialog.askstring("Input", "Enter Server Address:")
         self.user_profile.dsuserver = self.dsuserver
         self.messenger = DirectMessenger(self.dsuserver, self.username, self.password)
         print(f"Configured Server at {self.dsuserver}.")
@@ -72,12 +82,12 @@ class MainApp(tk.Tk):
         self.get_message_history()
 
     def get_message_history(self):
-        """Displays old messages"""
+        """Displays old and new messages in different colors."""
         self.message_display.config(state='normal')
         self.message_display.delete('1.0', tk.END)
 
+        # Check and display received messages
         if self.messenger:
-            print("messenger")
             messages = self.messenger.retrieve_all()
             for m in messages:
                 if m.sender == self.selected_contact and not any(d['message'] == m.message for d in self.user_profile.received):
@@ -86,16 +96,22 @@ class MainApp(tk.Tk):
             for m in messages:
                 if m.sender == self.selected_contact:
                     display_text = f"From {m.sender}: {m.message}\n"
-                    print(display_text)
-                    self.message_display.insert(tk.END, display_text)
+                    self.message_display.insert(tk.END, display_text, 'received')
 
+        # Display messages from the profile (assuming no messenger or offline)
         else:
-            messages = self.user_profile.received
-            for m in messages:
+            received_messages = self.user_profile.received
+            for m in received_messages:
                 if m['sender'] == self.selected_contact:
-                    print("sender is selected")
                     display_text = f"From {m['sender']}: {m['message']}\n"
-                    self.message_display.insert(tk.END, display_text)
+                    self.message_display.insert(tk.END, display_text, 'received')
+
+        # Display sent messages
+        sent_messages = self.user_profile.sent
+        for m in sent_messages:
+            if m['recipient'] == self.selected_contact:
+                display_text = f"To {m['recipient']}: {m['message']}\n"
+                self.message_display.insert(tk.END, display_text, 'sent')
 
         self.message_display.config(state='disabled')
 
@@ -161,6 +177,9 @@ class MainApp(tk.Tk):
         self.message_display.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
         self.message_display.config(state='disabled')
 
+        self.message_display.tag_configure('sent', foreground='black')
+        self.message_display.tag_configure('received', foreground='blue')
+
         lower_section = tk.Frame(right_frame, bg='#FFF1F5', width=650, height=50, bd=1, relief="solid")
         lower_section.pack(fill='both', side='bottom')
 
@@ -170,24 +189,29 @@ class MainApp(tk.Tk):
 
         def send_message():
             message = entry.get()
-            self.messenger.send(message, self.selected_contact)
-            self.user_profile.add_sent_message(message, self.selected_contact)
+            recipient = self.selected_contact
+            self.messenger.send(message, recipient)
+            self.user_profile.add_sent_message(message, recipient)
             self.user_profile.save_profile(self.filepath)
-            print(message)
+            entry.delete(0, 'end')
 
         button_font = tkFont.Font(family="Georgia", size=9)
         send_button = tk.Button(lower_section, text="SEND", font=button_font, command=send_message)
         send_button.grid(row=0, column=1, sticky='e', padx=10, pady=10)
 
-        server_button = tk.Button(root, text="Connect to Server", font=button_font, command=self.configure_server)
+        server_button = tk.Button(root, text="Connect to Server", font=button_font, command=self.new_server)
         server_button.grid(row=1, column=1, sticky='se', padx=10, pady=10)
+
+        quit_button = tk.Button(root, text="QUIT PROGRAM", font=button_font, command=self.quit_application)
+        quit_button.grid(row=2, column=1, sticky='se', padx=10, pady=10)
 
         user_button = tk.Button(root, text="Load User", font=button_font, command=self.load_user)
         user_button.grid(row=1, column=1, sticky='s', padx=10, pady=10)
-
-    def refresh(self):
-        pass
     
     def _draw(self, root):
         self.right_side(root)
         self.left_side(root)
+
+    def quit_application(self):
+        """Quits the application."""
+        self.root.destroy()
