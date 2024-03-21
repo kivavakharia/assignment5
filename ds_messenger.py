@@ -1,6 +1,8 @@
 """
 ds_messenger.py
 
+Handles interactions with the DS Server, namely sending
+and retrieving messages.
 """
 
 # Kiva Vakharia
@@ -19,6 +21,9 @@ class FailedInteraction(Exception):
 
 
 class DirectMessage:
+    """DirectMessage holds message objects to send between users
+    of the DS server."""
+
     def __init__(self, sender=None, message=None, timestamp=None):
         self.sender = sender
         self.message = message
@@ -26,6 +31,9 @@ class DirectMessage:
 
 
 class DirectMessenger:
+    """DirectMessenger holds methods required in order to send and
+    recieve DirectMessage objects on the DS Server."""
+
     def __init__(self, dsuserver=None, username=None, password=None):
         self.token = None
         self.sock = None
@@ -33,8 +41,7 @@ class DirectMessenger:
         self.username = username
         self.password = password
 
-
-    def send(self, message:str, recipient:str) -> bool:
+    def send(self, message: str, recipient: str) -> bool:
         """Send a message to a user on the DSU server."""
 
         if not self.token:
@@ -42,7 +49,8 @@ class DirectMessenger:
         if not self.token:
             return False
 
-        send_msg = format_send(message, recipient, str(time.time()), self.token)
+        send_msg = format_send(message, recipient, str(time.time()),
+                               self.token)
         resp = self._command_to_server(send_msg)
         print(resp)
         return resp and resp.get('response', {}).get('type') == 'ok'
@@ -61,7 +69,6 @@ class DirectMessenger:
             return [DirectMessage(m['from'], m['message'], m['timestamp']) for m in unread_messages]
         return []
 
-
     def retrieve_all(self) -> list:
         """Retrieve all messages under a profile."""
         self._socket_create()
@@ -77,7 +84,6 @@ class DirectMessenger:
             return [DirectMessage(m['from'], m['message'], m['timestamp']) for m in all_messages]
         return []
 
-
     def _socket_create(self):
         """Create and return a socket connecting to the DSU server."""
         try:
@@ -90,7 +96,6 @@ class DirectMessenger:
         except Exception as e:
             print(f"Could not connect to server: {e}")
 
-
     def _login_user(self) -> None:
         """Log the user into the DSU server."""
         self._socket_create()
@@ -101,7 +106,6 @@ class DirectMessenger:
             self.token = resp['response']['token']
         else:
             raise FailedInteraction("Failed to log in.")
-
 
     def _command_to_server(self, cmd) -> str:
         """Send a command to the DSU server."""
@@ -118,7 +122,6 @@ class DirectMessenger:
         except Exception:
             print("ERROR: Failed to send ", {cmd})
             return None
-
 
     def close_sock(self) -> None:
         """Closes the current open socket."""

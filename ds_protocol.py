@@ -1,6 +1,7 @@
 """
 ds_protocol.py
 
+Formats commands in order to adhere to the DS Server.
 """
 
 # Kiva Vakharia
@@ -31,9 +32,11 @@ def bio_format(token: str, entry: str, timestamp: str) -> str:
                        "bio": {"entry": entry, "timestamp": timestamp}})
 
 
-def format_send(entry: str, recipient: str, timestamp: str, token: str = '') -> str:
+def format_send(entry: str, recipient: str, timestamp: str, token: str = ''):
     """Send a directmessage to another DS user"""
-    return json.dumps({"token": token, "directmessage": {"entry": entry, "recipient": recipient, "timestamp": timestamp}})
+    return json.dumps({"token": token, "directmessage":
+                       {"entry": entry, "recipient": recipient,
+                        "timestamp": timestamp}})
 
 
 def format_unread(token: str = ''):

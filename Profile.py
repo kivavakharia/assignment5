@@ -19,8 +19,6 @@ Classes:
 import json
 import time
 from pathlib import Path
-from collections import namedtuple
-
 
 
 class DsuFileError(Exception):
@@ -71,10 +69,10 @@ class Post(dict):
         """Get a post's entry."""
         return self._entry
 
-    def set_time(self, time: float):
+    def set_time(self, post_time: float):
         """Set the timestamp for a post."""
-        self._timestamp = time
-        dict.__setitem__(self, 'timestamp', time)
+        self._timestamp = post_time
+        dict.__setitem__(self, 'timestamp', post_time)
 
     def get_time(self):
         """Get the timestamp of a post."""
@@ -211,7 +209,7 @@ class Profile:
 
     def add_friend(self, friend_user: str) -> None:
         """Add a username to the user's list of friends."""
-        if not friend_user in self.friends:
+        if friend_user not in self.friends:
             self.friends.append(friend_user)
 
     def get_friends(self) -> list:
@@ -229,7 +227,3 @@ class Profile:
         """Record a message that you have sent."""
         format = {'recipient': recipient, 'message': message}
         self.sent.append(format)
-
-    def get_messages(self) -> dict:
-        """Get all the messages sent to the user."""
-        return self.recieved
